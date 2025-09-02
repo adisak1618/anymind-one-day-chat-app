@@ -1,0 +1,13 @@
+query MessagesFetchMore(
+  $channelId: ChannelId!
+  $messageId: String!
+  $old: Boolean!
+) {
+  MessagesFetchMore(channelId: $channelId, messageId: $messageId, old: $old) {
+    __typename
+    userId
+    messageId
+    text
+    datetime
+  }
+}

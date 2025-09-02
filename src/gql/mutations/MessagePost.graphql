@@ -1,0 +1,9 @@
+mutation MessagePost($channelId: ChannelId!, $text: String!, $userId: UserId!) {
+  MessagePost(channelId: $channelId, text: $text, userId: $userId) {
+    __typename
+    userId
+    messageId
+    text
+    datetime
+  }
+}

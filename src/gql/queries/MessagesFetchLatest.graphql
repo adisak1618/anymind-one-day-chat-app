@@ -1,0 +1,9 @@
+query MessagesFetchLatest($channelId: ChannelId!) {
+  MessagesFetchLatest(channelId: $channelId) {
+    __typename
+    userId
+    messageId
+    text
+    datetime
+  }
+}
