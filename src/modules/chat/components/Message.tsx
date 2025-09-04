@@ -6,9 +6,10 @@ type MessageProps = {
   userId: UserId;
   text: string;
   isMe: boolean;
+  messageId: string;
 };
 
-export const Message = ({ userId, text, isMe }: MessageProps) => {
+export const Message = ({ userId, text, isMe, messageId }: MessageProps) => {
   return (
     <div className={cn("flex items-end gap-2 mb-4", isMe ? "flex-row-reverse" : "flex-row")}>
       <Avatar userId={userId} />
@@ -35,6 +36,7 @@ export const Message = ({ userId, text, isMe }: MessageProps) => {
           )}
         />
       </div>
+      <p className="text-xs text-gray-500">{messageId === "temp-id" ? "sending..." : "sended"}</p>
     </div>
   );
 };
