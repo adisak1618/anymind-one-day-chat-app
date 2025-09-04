@@ -20,7 +20,7 @@ type ChannelMessagesType = {
 
 
 const ChatPanel = ({ channelId }: ChatPanelProps) => {
-  const { data } = useMessageFetchLatest(channelId);
+  const { data, loading } = useMessageFetchLatest(channelId);
   const [message, setMessage] = useState<ChannelMessagesType>({});
   const [postMessage] = useMessagePostMutation({
     update: (cache, data) => {
@@ -79,7 +79,7 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
   return (
     <div className="flex flex-col gap-4 h-full">
       <div className="flex-1 overflow-auto rounded-md border border-gray-200 p-3 bg-white">
-        <MessageList messages={messages} />
+        <MessageList messages={messages} isLoading={loading} />
       </div>
 
       <Composer
