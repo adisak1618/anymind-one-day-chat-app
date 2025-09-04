@@ -5,6 +5,7 @@ import {
   ChannelId,
   MessagesFetchLatestDocument,
   UserId,
+  type MessagesFetchLatestQuery,
 } from "@gql/generated/graphql";
 import { useMessageFetchLatest } from "@/modules/chat/api/hooks/useMessageFetchLatestQuery";
 import { MessageList } from "@/modules/chat/components/MessageList";
@@ -21,7 +22,22 @@ type ChannelMessagesType = {
 const ChatPanel = ({ channelId }: ChatPanelProps) => {
   const { data } = useMessageFetchLatest(channelId);
   const [message, setMessage] = useState<ChannelMessagesType>({});
-  const [postMessage] = useMessagePostMutation();
+  const [postMessage] = useMessagePostMutation({
+    update: (cache, data) => {
+      const cachedData = cache.readQuery<MessagesFetchLatestQuery>({
+        query: MessagesFetchLatestDocument,
+        variables: { channelId },
+      });
+
+      if(!data?.data?.MessagePost) return;
+      
+      cache.writeQuery({
+        query: MessagesFetchLatestDocument,
+        variables: { channelId },
+        data: { MessagesFetchLatest: [...(cachedData?.MessagesFetchLatest ?? []), data?.data?.MessagePost] },
+      });
+    },
+  });
 
   const handleSubmit = () => {
     const text = message[channelId].trim();
@@ -33,7 +49,15 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
         userId: UserId.Sam,
         text,
       },
-      refetchQueries: [MessagesFetchLatestDocument],
+      optimisticResponse: {
+        MessagePost: {
+          __typename: "MessageEnum",
+          userId: UserId.Sam,
+          messageId: "temp-id",
+          text,
+          datetime: new Date().toISOString(),
+        },
+      },
       onCompleted: () => {
         setMessage({
           ...message,

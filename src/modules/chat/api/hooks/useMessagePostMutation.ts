@@ -5,9 +5,11 @@ import {
   type MessagePostMutationVariables,
 } from "@gql/generated/graphql";
 
-export const useMessagePostMutation = () => {
+
+export const useMessagePostMutation = (options?: useMutation.Options<MessagePostMutation, MessagePostMutationVariables>) => {
   return useMutation<MessagePostMutation, MessagePostMutationVariables>(
-    MessagePostDocument
+    MessagePostDocument,
+    options
   );
 };
 

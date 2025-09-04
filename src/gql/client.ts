@@ -10,5 +10,3 @@ export const apolloClient = new ApolloClient({
 })
 
 export default apolloClient
-
-
