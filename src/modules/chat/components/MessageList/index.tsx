@@ -16,7 +16,7 @@ export const MessageList = ({ messages, isLoading, currentUserId }: MessageListP
   return (
     <div className="space-y-2">
       {messages?.map((m) => (
-        <Message key={m.messageId} userId={m.userId} text={m.text} isMe={currentUserId === m.userId} />
+        <Message key={m.messageId} userId={m.userId} text={m.text} isMe={currentUserId === m.userId} messageId={m.messageId} />
       ))}
     </div>
   );
