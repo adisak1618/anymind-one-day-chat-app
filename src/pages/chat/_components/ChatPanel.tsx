@@ -20,6 +20,7 @@ type ChannelMessagesType = {
 
 
 const ChatPanel = ({ channelId }: ChatPanelProps) => {
+  const [selectedUserId, setSelectedUserId] = useState<UserId>(UserId.Sam);
   const { data, loading } = useMessageFetchLatest(channelId);
   const [message, setMessage] = useState<ChannelMessagesType>({});
   const [postMessage] = useMessagePostMutation({
@@ -46,7 +47,7 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
     postMessage({
       variables: {
         channelId,
-        userId: UserId.Sam,
+        userId: selectedUserId,
         text,
       },
       optimisticResponse: {
@@ -79,7 +80,7 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
   return (
     <div className="flex flex-col gap-4 h-full">
       <div className="flex-1 overflow-auto rounded-md border border-gray-200 p-3 bg-white">
-        <MessageList messages={messages} isLoading={loading} />
+        <MessageList messages={messages} isLoading={loading} currentUserId={selectedUserId} />
       </div>
 
       <Composer
@@ -89,7 +90,10 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
           ...message,
           [channelId]: text,
         })}
+        selectedUserId={selectedUserId}
+        setSelectedUserId={setSelectedUserId}
         onSubmit={handleSubmit}
+
       />
     </div>
   );

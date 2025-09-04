@@ -13,7 +13,7 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
     const avatarSrc = `/avatars/${userId}.jpg`
     
     const baseClasses = clsx(
-      'w-6 h-6 inline-flex items-center justify-center rounded-full overflow-hidden bg-gray-200'
+      'w-10 h-10 inline-flex items-center justify-center rounded-full overflow-hidden bg-gray-200'
     )
 
     return (
