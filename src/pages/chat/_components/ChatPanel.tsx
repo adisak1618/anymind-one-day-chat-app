@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useRef, useState } from "react";
 import { Composer } from "@/modules/chat/components/Composer";
 import { useMessagePostMutation } from "@/modules/chat/api/hooks/useMessagePostMutation";
 import {
@@ -7,21 +7,22 @@ import {
   UserId,
   type MessagesFetchLatestQuery,
 } from "@gql/generated/graphql";
-import { useMessageFetchLatest } from "@/modules/chat/api/hooks/useMessageFetchLatestQuery";
-import { MessageList } from "@/modules/chat/components/MessageList";
+import { MessageListContainer } from "./MessageListContainer";
 
 type ChatPanelProps = {
   channelId: ChannelId;
 };
 
 type ChannelMessagesType = {
-  [key in string]: string
+  [key in string]: string;
 };
 
-
 const ChatPanel = ({ channelId }: ChatPanelProps) => {
+  const messageListRef = useRef<HTMLDivElement>(null);
   const [selectedUserId, setSelectedUserId] = useState<UserId>(UserId.Sam);
-  const { data, loading } = useMessageFetchLatest(channelId);
+
+  
+
   const [message, setMessage] = useState<ChannelMessagesType>({});
   const [postMessage] = useMessagePostMutation({
     update: (cache, data) => {
@@ -30,19 +31,35 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
         variables: { channelId },
       });
 
-      if(!data?.data?.MessagePost) return;
-      
+      if (!data?.data?.MessagePost) return;
+
       cache.writeQuery({
         query: MessagesFetchLatestDocument,
         variables: { channelId },
-        data: { MessagesFetchLatest: [...(cachedData?.MessagesFetchLatest ?? []), data?.data?.MessagePost] },
+        data: {
+          MessagesFetchLatest: [
+            ...(cachedData?.MessagesFetchLatest ?? []),
+            data?.data?.MessagePost,
+          ],
+        },
       });
     },
   });
 
+  const scrollToBottom = () => {
+    console.log("scrollToBottom", messageListRef.current);
+    if(messageListRef.current) {
+      messageListRef.current.scrollTo({
+        top: messageListRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const handleSubmit = () => {
     const text = message[channelId].trim();
     if (!text) return;
+    scrollToBottom();
 
     postMessage({
       variables: {
@@ -68,32 +85,25 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
     });
   };
 
-  const messages = useMemo(() => {
-    if (!data?.MessagesFetchLatest || data?.MessagesFetchLatest?.length === 0) {
-      return [];
-    }
-    return [...(data?.MessagesFetchLatest ?? [])].sort(
-      (a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
-    );
-  }, [data]);
-
   return (
     <div className="flex flex-col gap-4 h-full">
-      <div className="flex-1 overflow-auto rounded-md border border-gray-200 p-3 bg-white">
-        <MessageList messages={messages} isLoading={loading} currentUserId={selectedUserId} />
+      <div className="flex flex-col flex-1 overflow-hidden rounded-md border border-gray-200 p-3 bg-white">
+
+        <MessageListContainer ref={messageListRef} channelId={channelId} selectedUserId={selectedUserId} />
       </div>
 
       <Composer
-        key={channelId}
+        // key={channelId}
         message={message[channelId]}
-        onChange={text => setMessage({
-          ...message,
-          [channelId]: text,
-        })}
+        onChange={(text) =>
+          setMessage({
+            ...message,
+            [channelId]: text,
+          })
+        }
         selectedUserId={selectedUserId}
         setSelectedUserId={setSelectedUserId}
         onSubmit={handleSubmit}
-
       />
     </div>
   );
