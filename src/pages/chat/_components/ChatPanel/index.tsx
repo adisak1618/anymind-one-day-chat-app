@@ -72,6 +72,15 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
     sendMessage({ text, userId: selectedUserId });
   };
 
+  const handleResend = (message: ErrorMessageType) => {
+    setErrorMessage(errorMessages.filter(m => m.id !== message.id));
+    sendMessage({ text: message.message, userId: message.userId });
+  };
+
+  const handleUndoSend = (messageId: ErrorMessageType["id"]) => {
+    setErrorMessage(errorMessages.filter(m => m.id !== messageId));
+  };
+
   return (
     <div className="flex flex-col gap-4 h-full">
       <div
@@ -83,6 +92,9 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
           selectedUserId={selectedUserId}
           onMessagesLoaded={handleMessagesLoaded}
           errorMessages={errorMessages}
+          onDeleteErrorMessage={errorMessageId => setErrorMessage(errorMessages.filter(m => m.id !== errorMessageId))}
+          onResend={handleResend}
+          onUndoSend={handleUndoSend}
         />
       </div>
 

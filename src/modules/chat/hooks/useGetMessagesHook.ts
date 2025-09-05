@@ -1,7 +1,12 @@
 import { useMemo, useState } from "react";
 import { useMessageFetchLatest } from "./useMessageFetchLatestQuery";
 import { useMessagesMoreQuery } from "./useMessagesMoreQuery";
-import { ChannelId, MessagesFetchLatestDocument, type MessagesFetchLatestQuery } from "@/gql/generated/graphql";
+import {
+  ChannelId,
+  MessagesFetchLatestDocument,
+  UserId,
+  type MessagesFetchLatestQuery,
+} from "@/gql/generated/graphql";
 import apolloClient from "@/gql/client";
 
 type NoMoreMessagesType = {
@@ -10,24 +15,28 @@ type NoMoreMessagesType = {
 
 type UseGetMessagesHookProps = {
   channelId: ChannelId;
+  selectedUserId: UserId;
 };
 
-export const useGetMessagesHook = ({ channelId }: UseGetMessagesHookProps) => {
+export const useGetMessagesHook = ({
+  channelId,
+  selectedUserId,
+}: UseGetMessagesHookProps) => {
   const [isLoadingMoreMessages, setIsLoadingMoreMessages] = useState(false);
   const [noMoreMessages, setNoMoreMessages] = useState<NoMoreMessagesType>({});
 
   const [fetchMoreMessagesMutation, { fetchMore, called: moreMessagesCalled }] =
     useMessagesMoreQuery();
 
-  const { data, loading } = useMessageFetchLatest(channelId);
+  const { data, loading: isLoadingLatestMessages } =
+    useMessageFetchLatest(channelId);
 
   const hasMoreMessages = useMemo(() => {
-    
     // If we've received an empty response from fetchMore, no more messages
     if (noMoreMessages[channelId]) {
       return false;
     }
-    
+
     // If initial data has less than 10 messages, likely no more messages
     if (data?.MessagesFetchLatest && data.MessagesFetchLatest.length < 10) {
       return false;
@@ -47,10 +56,13 @@ export const useGetMessagesHook = ({ channelId }: UseGetMessagesHookProps) => {
     return [...latestMessages];
   }, [data]);
 
+  const errorMessages = useMemo(() => {
+    return messages.filter((m) => m.userId === selectedUserId);
+  }, [messages, selectedUserId]);
+
   const handleUpdateLatestMessagesCache = (
     result: MessagesFetchLatestQuery["MessagesFetchLatest"]
   ) => {
-
     const latestMessagesCached = apolloClient.readQuery({
       query: MessagesFetchLatestDocument,
       variables: { channelId },
@@ -72,7 +84,9 @@ export const useGetMessagesHook = ({ channelId }: UseGetMessagesHookProps) => {
     setIsLoadingMoreMessages(true);
 
     try {
-      const fetchMoreFunction = moreMessagesCalled ? fetchMore : fetchMoreMessagesMutation;
+      const fetchMoreFunction = moreMessagesCalled
+        ? fetchMore
+        : fetchMoreMessagesMutation;
 
       const result = await fetchMoreFunction({
         variables: {
@@ -83,7 +97,7 @@ export const useGetMessagesHook = ({ channelId }: UseGetMessagesHookProps) => {
       });
 
       const fetchedMessages = result.data?.MessagesFetchMore;
-      
+
       // Explicitly track if we received an empty response
       if (!fetchedMessages || fetchedMessages.length === 0) {
         console.log("Received empty response from fetchMore");
@@ -100,7 +114,15 @@ export const useGetMessagesHook = ({ channelId }: UseGetMessagesHookProps) => {
       setIsLoadingMoreMessages(false);
     }
   };
-  
 
-  return { fetchMoreMessages, messages, hasMoreMessages, noMoreMessages, isLoadingMoreMessages, loading,  };
+  return {
+    fetchMoreMessages,
+    messages,
+    errorMessages,
+    hasMoreMessages,
+    noMoreMessages,
+    isLoadingMoreMessages,
+    isLoadingLatestMessages,
+    loading: isLoadingLatestMessages || isLoadingMoreMessages,
+  };
 };
