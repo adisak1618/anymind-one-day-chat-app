@@ -46,7 +46,7 @@ export const useSendMessageHook = ({ channelId, onCompleted, onError }: UseSendM
       optimisticResponse: {
         MessagePost: {
           __typename: "MessageEnum",
-          userId: UserId.Sam,
+          userId,
           messageId: "temp-id",
           text,
           datetime: new Date().toISOString(),
