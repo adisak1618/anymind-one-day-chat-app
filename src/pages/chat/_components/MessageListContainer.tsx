@@ -10,11 +10,14 @@ import { useMessagesMoreQuery } from "@/modules/chat/api/hooks/useMessagesMoreQu
 import { MessageList } from "@/modules/chat/components/MessageList";
 import Button from "@/ui/Button";
 import { forwardRef, useMemo, useState, useEffect } from "react";
+import { ErrorMessageList } from "./ErrorMessageList";
+import type { ErrorMessageType } from "./ChatPanel/type";
 
 type MessageListContainerProps = {
   channelId: ChannelId;
   selectedUserId: UserId;
   onMessagesLoaded?: () => void;
+  errorMessages: ErrorMessageType[];
 };
 
 type NoMoreMessagesType = {
@@ -25,6 +28,7 @@ export const MessageListContainer = forwardRef<HTMLDivElement, MessageListContai
   channelId,
   selectedUserId,
   onMessagesLoaded,
+  errorMessages,
 }, ref) => {
   // loading in useLazyQuery is bugged, so we need to use a state to track the loading
   const [isLoadingMoreMessages, setIsLoadingMoreMessages] = useState(false);
@@ -130,8 +134,8 @@ export const MessageListContainer = forwardRef<HTMLDivElement, MessageListContai
   };
 
   return (
-    <div ref={ref} className="flex flex-col gap-4 overflow-auto">
-      {hasMoreMessages && (
+    <div ref={ref} className="flex flex-col gap-4">
+      {!loading && hasMoreMessages && (
         <Button onClick={() => handleFetchMoreMessages()}>
           {isLoadingMoreMessages ? "Loading..." : "Fetch More Messages"}
         </Button>
@@ -141,6 +145,7 @@ export const MessageListContainer = forwardRef<HTMLDivElement, MessageListContai
         isLoading={loading}
         currentUserId={selectedUserId}
       />
+      {!loading && <ErrorMessageList errorMessages={errorMessages.filter((m) => m.channelId === channelId && m.userId === selectedUserId)} />}
     </div>
   );
 });

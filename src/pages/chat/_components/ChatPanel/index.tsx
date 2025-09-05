@@ -7,7 +7,8 @@ import {
   UserId,
   type MessagesFetchLatestQuery,
 } from "@gql/generated/graphql";
-import { MessageListContainer } from "./MessageListContainer";
+import { MessageListContainer } from "../MessageListContainer";
+import type { ErrorMessageType } from "./type";
 
 type ChatPanelProps = {
   channelId: ChannelId;
@@ -20,7 +21,13 @@ type ChannelMessagesType = {
 const ChatPanel = ({ channelId }: ChatPanelProps) => {
   const messageListRef = useRef<HTMLDivElement>(null);
   const [selectedUserId, setSelectedUserId] = useState<UserId>(UserId.Sam);
-
+  const [errorMessages, setErrorMessage] = useState<ErrorMessageType[]>([{
+    id: crypto.randomUUID(),
+    channelId: ChannelId.Lgtm,
+    message: "test",
+    userId: selectedUserId,
+    datetime: new Date().toISOString(),
+  }]);
   
 
   const [message, setMessage] = useState<ChannelMessagesType>({});
@@ -85,18 +92,27 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
           [channelId]: "",
         });
       },
+      onError: (_, context) => {
+        setErrorMessage([...errorMessages, {
+          id: crypto.randomUUID(),
+          channelId,
+          message: context?.variables?.text ?? "",
+          userId: selectedUserId,
+          datetime: new Date().toISOString(),
+        }]);
+      },
     });
   };
 
   return (
     <div className="flex flex-col gap-4 h-full">
-      <div className="flex flex-col flex-1 overflow-hidden rounded-md border border-gray-200 p-3 bg-white">
+      <div ref={messageListRef}  className="flex flex-col flex-1 overflow-auto rounded-md border border-gray-200 p-3 bg-white">
 
         <MessageListContainer 
-          ref={messageListRef} 
           channelId={channelId} 
           selectedUserId={selectedUserId}
           onMessagesLoaded={handleMessagesLoaded}
+          errorMessages={errorMessages}
         />
       </div>
 

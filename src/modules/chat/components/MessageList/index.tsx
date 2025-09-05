@@ -8,7 +8,18 @@ type MessageListProps = {
   currentUserId: UserId;
 };
 
-export const MessageList = ({ messages, isLoading, currentUserId }: MessageListProps) => {
+const getMessageStatus = (message: MessageEnum) => {
+  if (message.messageId === "temp-id") {
+    return "loading";
+  }
+  return "success";
+};
+
+export const MessageList = ({
+  messages,
+  isLoading,
+  currentUserId,
+}: MessageListProps) => {
   if (isLoading) {
     return <MessageListSkeleton count={5} />;
   }
@@ -16,7 +27,15 @@ export const MessageList = ({ messages, isLoading, currentUserId }: MessageListP
   return (
     <div className="space-y-2">
       {messages?.map((m) => (
-        <Message key={m.messageId} userId={m.userId} text={m.text} isMe={currentUserId === m.userId} messageId={m.messageId} />
+        <Message
+          key={m.messageId}
+          userId={m.userId}
+          text={m.text}
+          isMe={currentUserId === m.userId}
+          messageId={m.messageId}
+          status={getMessageStatus(m)}
+          datetime={new Date(m.datetime)}
+        />
       ))}
     </div>
   );
