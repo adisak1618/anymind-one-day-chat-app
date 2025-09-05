@@ -1,14 +1,13 @@
-import { type ChannelId, type UserId } from "@/gql/generated/graphql";
-import { MessageList } from "@/modules/chat/components/MessageList";
 import Button from "@/ui/Button";
 import { forwardRef, useEffect } from "react";
 import type { ErrorMessageType } from "./ChatPanel/type";
 import { useGetMessagesHook } from "@/modules/chat/hooks/useGetMessagesHook";
 import { Message } from "@/modules/chat/components/Message";
+import { useChatContext } from "@/modules/chat/context/ChatContext";
+import type { MessageEnum } from "@/gql/generated/graphql";
+import { MessageListSkeletonLoading } from "@/modules/chat/components/MessageListSkeletonLoading";
 
 type MessageListContainerProps = {
-  channelId: ChannelId;
-  selectedUserId: UserId;
   onMessagesLoaded?: () => void;
   errorMessages: ErrorMessageType[];
   onDeleteErrorMessage: (messageId: ErrorMessageType["id"]) => void;
@@ -19,14 +18,15 @@ type MessageListContainerProps = {
 export const MessageListContainer = forwardRef<
   HTMLDivElement,
   MessageListContainerProps
->(({ channelId, selectedUserId, onMessagesLoaded, errorMessages, onUndoSend, onResend }, ref) => {
+>(({ onMessagesLoaded, errorMessages, onUndoSend, onResend }, ref) => {
+  const { selectedChannel, selectedUserId } = useChatContext();
   const {
     fetchMoreMessages,
     messages,
     hasMoreMessages,
     isLoadingMoreMessages,
-    isLoadingLatestMessages
-  } = useGetMessagesHook({ channelId, selectedUserId });
+    isLoadingLatestMessages,
+  } = useGetMessagesHook({ channelId: selectedChannel, selectedUserId });
 
   useEffect(() => {
     if (messages.length > 0 && !isLoadingLatestMessages && onMessagesLoaded) {
@@ -43,25 +43,40 @@ export const MessageListContainer = forwardRef<
           </Button>
         </div>
       )}
-      <MessageList
-        messages={messages}
-        isLoading={isLoadingLatestMessages}
-        currentUserId={selectedUserId}
-      />
-      {!isLoadingLatestMessages && (
-        errorMessages.map((m) => (
+      <div className="space-y-2">
+        {isLoadingLatestMessages && <MessageListSkeletonLoading count={5} />}
+        {messages?.map((m) => (
           <Message
-            isMe={true}
+            key={m.messageId}
             userId={m.userId}
-            text={m.message}
-            messageId={m.id}
-            status="error"
+            text={m.text}
+            isMe={selectedUserId === m.userId}
+            messageId={m.messageId}
+            status={getMessageStatus(m)}
             datetime={new Date(m.datetime)}
-            onUndoSend={() => onUndoSend(m.id)}
-            onResend={() => onResend(m)}
           />
-        ))
-      )}
+        ))}
+        {!isLoadingLatestMessages &&
+          errorMessages.map((m) => (
+            <Message
+              isMe={true}
+              userId={m.userId}
+              text={m.message}
+              messageId={m.id}
+              status="error"
+              datetime={new Date(m.datetime)}
+              onUndoSend={() => onUndoSend(m.id)}
+              onResend={() => onResend(m)}
+            />
+          ))}
+      </div>
     </div>
   );
 });
+
+const getMessageStatus = (message: MessageEnum) => {
+  if (message.messageId === "temp-id") {
+    return "loading";
+  }
+  return "success";
+};

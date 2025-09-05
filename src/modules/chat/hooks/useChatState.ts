@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { UserId } from "@gql/generated/graphql";
 import type { ErrorMessageType } from "@/pages/chat/_components/ChatPanel/type";
 
 type ChannelMessagesType = {
@@ -7,7 +6,6 @@ type ChannelMessagesType = {
 };
 
 export const useChatState = () => {
-  const [selectedUserId, setSelectedUserId] = useState<UserId>(UserId.Sam);
   const [errorMessages, setErrorMessages] = useState<ErrorMessageType[]>([]);
   const [messages, setMessages] = useState<ChannelMessagesType>({});
 
@@ -28,12 +26,10 @@ export const useChatState = () => {
 
   return {
     // State values
-    selectedUserId,
     errorMessages,
     messages,
     
     // State setters
-    setSelectedUserId,
     setErrorMessages,
     setMessages,
     

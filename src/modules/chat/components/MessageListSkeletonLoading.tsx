@@ -1,10 +1,10 @@
 import Skeleton from "@/ui/Skeleton";
 
-type MessageListSkeletonProps = {
+type MessageListSkeletonLoadingProps = {
   count?: number;
 };
 
-export const MessageListSkeleton = ({ count = 5 }: MessageListSkeletonProps) => {
+export const MessageListSkeletonLoading = ({ count = 5 }: MessageListSkeletonLoadingProps) => {
   return (
     <ul className="space-y-2">
       {Array.from({ length: count }).map((_, index) => (

@@ -2,16 +2,16 @@ import { UserId } from "@/gql/generated/graphql"
 import Button from "@/ui/Button"
 import SelectInput from "@/ui/SelectInput"
 import TextInput from "@/ui/TextInput"
+import { useChatContext } from "../../context/ChatContext"
 
 type ComposerProps = {
   message: string
   onSubmit: () => void
   onChange: (message: string) => void
-  selectedUserId: UserId
-  setSelectedUserId: (userId: UserId) => void
 }
 
-export const Composer = ({ message, onSubmit, onChange, selectedUserId, setSelectedUserId }: ComposerProps) => {
+export const Composer = ({ message, onSubmit, onChange }: ComposerProps) => {
+  const { selectedUserId, setSelectedUserId } = useChatContext();
   return (
     <div className="flex flex-col gap-2">
       <TextInput className="w-full" placeholder="Type a message" rows={2} value={message} onChange={(e) => onChange(e.target.value)} />

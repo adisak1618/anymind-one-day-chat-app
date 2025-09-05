@@ -1,34 +1,27 @@
 import { useRef } from "react";
 import { Composer } from "@/modules/chat/components/Composer";
-import {
-  ChannelId,
-} from "@gql/generated/graphql";
 import { MessageListContainer } from "../MessageListContainer";
 import type { ErrorMessageType } from "./type";
 import { useSendMessageHook } from "@/modules/chat/hooks/useSendMessageHook";
 import { useChatState } from "@/modules/chat/hooks/useChatState";
+import { useChatContext } from "@/modules/chat/context/ChatContext";
 
-type ChatPanelProps = {
-  channelId: ChannelId;
-};
-
-const ChatPanel = ({ channelId }: ChatPanelProps) => {
+const ChatPanel = () => {
   const messageListRef = useRef<HTMLDivElement>(null);
   const {
-    selectedUserId,
-    setSelectedUserId,
     errorMessages,
     messages,
     addErrorMessage,
     removeErrorMessage,
     updateChannelMessage
   } = useChatState();
+  const { selectedChannel, selectedUserId } = useChatContext();
   const { sendMessage } = useSendMessageHook({
-    channelId,
+    channelId: selectedChannel,
     onError: (_, context) => {
       addErrorMessage({
         id: crypto.randomUUID(),
-        channelId,
+        channelId: selectedChannel,
         message: context?.variables?.text ?? "",
         userId: selectedUserId,
         datetime: new Date().toISOString(),
@@ -50,11 +43,11 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
   };
 
   const handleSubmit = () => {
-    const text = messages[channelId].trim();
+    const text = messages[selectedChannel].trim();
     if (!text) return;
 
     // Reset the message input
-    updateChannelMessage(channelId, "");
+    updateChannelMessage(selectedChannel, "");
     sendMessage({ text, userId: selectedUserId });
     scrollToBottom("smooth");
   };
@@ -75,8 +68,6 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
         className="flex flex-col flex-1 overflow-auto rounded-md border border-gray-200 p-3 bg-white"
       >
         <MessageListContainer
-          channelId={channelId}
-          selectedUserId={selectedUserId}
           onMessagesLoaded={handleMessagesLoaded}
           errorMessages={errorMessages}
           onDeleteErrorMessage={removeErrorMessage}
@@ -86,10 +77,8 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
       </div>
 
       <Composer
-        message={messages[channelId]}
-        onChange={(text) => updateChannelMessage(channelId, text)}
-        selectedUserId={selectedUserId}
-        setSelectedUserId={setSelectedUserId}
+        message={messages[selectedChannel]}
+        onChange={(text) => updateChannelMessage(selectedChannel, text)}
         onSubmit={handleSubmit}
       />
     </div>
