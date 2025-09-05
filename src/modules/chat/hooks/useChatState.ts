@@ -1,13 +1,15 @@
-import { useState } from "react";
 import type { ErrorMessageType } from "@/pages/chat/_components/ChatPanel/type";
+import { useLocalStorage } from "@/lib/useLocalStorage";
+import { useChatContext } from "../context/ChatContext";
 
 type ChannelMessagesType = {
   [key in string]: string;
 };
 
 export const useChatState = () => {
-  const [errorMessages, setErrorMessages] = useState<ErrorMessageType[]>([]);
-  const [messages, setMessages] = useState<ChannelMessagesType>({});
+  const { selectedChannel } = useChatContext();
+  const [errorMessages, setErrorMessages] = useLocalStorage<ErrorMessageType[]>('chat-error-messages', []);
+  const [messages, setMessages] = useLocalStorage<ChannelMessagesType>('chat-messages', {});
 
   const addErrorMessage = (errorMessage: ErrorMessageType) => {
     setErrorMessages((prev) => [...prev, errorMessage]);
@@ -26,7 +28,7 @@ export const useChatState = () => {
 
   return {
     // State values
-    errorMessages,
+    errorMessages: errorMessages?.filter(m => m.channelId === selectedChannel),
     messages,
     
     // State setters
