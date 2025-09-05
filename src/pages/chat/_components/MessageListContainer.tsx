@@ -6,6 +6,7 @@ import { Message } from "@/modules/chat/components/Message";
 import { useChatContext } from "@/modules/chat/context/ChatContext";
 import type { MessageEnum } from "@/gql/generated/graphql";
 import { MessageListSkeletonLoading } from "@/modules/chat/components/MessageListSkeletonLoading";
+import { EmptyChannelPlaceholder } from "@/modules/chat/components/EmptyChannelPlaceholder";
 
 type MessageListContainerProps = {
   onMessagesLoaded?: () => void;
@@ -69,6 +70,11 @@ export const MessageListContainer = forwardRef<
               onResend={() => onResend(m)}
             />
           ))}
+        {!isLoadingLatestMessages && 
+          (!messages || messages.length === 0) && 
+          errorMessages.length === 0 && (
+          <EmptyChannelPlaceholder channelName={selectedChannel} />
+        )}
       </div>
     </div>
   );
