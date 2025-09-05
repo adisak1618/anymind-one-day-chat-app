@@ -19,15 +19,7 @@ type ChannelMessagesType = {
 const ChatPanel = ({ channelId }: ChatPanelProps) => {
   const messageListRef = useRef<HTMLDivElement>(null);
   const [selectedUserId, setSelectedUserId] = useState<UserId>(UserId.Sam);
-  const [errorMessages, setErrorMessage] = useState<ErrorMessageType[]>([
-    {
-      id: crypto.randomUUID(),
-      channelId: ChannelId.Lgtm,
-      message: "test",
-      userId: selectedUserId,
-      datetime: new Date().toISOString(),
-    },
-  ]);
+  const [errorMessages, setErrorMessage] = useState<ErrorMessageType[]>([]);
 
   const [message, setMessage] = useState<ChannelMessagesType>({});
   const { sendMessage } = useSendMessageHook({
