@@ -24,12 +24,6 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
   const [message, setMessage] = useState<ChannelMessagesType>({});
   const { sendMessage } = useSendMessageHook({
     channelId,
-    onCompleted: () => {
-      setMessage({
-        ...message,
-        [channelId]: "",
-      });
-    },
     onError: (_, context) => {
       setErrorMessage([
         ...errorMessages,
@@ -60,8 +54,14 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
   const handleSubmit = () => {
     const text = message[channelId].trim();
     if (!text) return;
-    scrollToBottom("smooth");
+
+    // Reset the message input
+    setMessage({
+      ...message,
+      [channelId]: "",
+    });
     sendMessage({ text, userId: selectedUserId });
+    scrollToBottom("smooth");
   };
 
   const handleResend = (message: ErrorMessageType) => {
