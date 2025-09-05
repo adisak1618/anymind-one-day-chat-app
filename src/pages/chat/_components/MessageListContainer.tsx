@@ -1,5 +1,5 @@
 import Button from "@/ui/Button";
-import { forwardRef, useEffect } from "react";
+import React, { forwardRef, useEffect } from "react";
 import type { ErrorMessageType } from "./ChatPanel/type";
 import { useGetMessagesHook } from "@/modules/chat/hooks/useGetMessagesHook";
 import { Message } from "@/modules/chat/components/Message";
@@ -29,10 +29,10 @@ export const MessageListContainer = forwardRef<
   } = useGetMessagesHook({ channelId: selectedChannel, selectedUserId });
 
   useEffect(() => {
-    if (messages.length > 0 && !isLoadingLatestMessages && onMessagesLoaded) {
+    if (!isLoadingLatestMessages && onMessagesLoaded) {
       onMessagesLoaded();
     }
-  }, [messages.length, isLoadingLatestMessages, onMessagesLoaded]);
+  }, [isLoadingLatestMessages, onMessagesLoaded]);
 
   return (
     <div ref={ref} className="flex flex-col gap-4">

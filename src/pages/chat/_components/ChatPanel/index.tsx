@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 import { Composer } from "@/modules/chat/components/Composer";
 import { MessageListContainer } from "../MessageListContainer";
 import type { ErrorMessageType } from "./type";
@@ -38,18 +38,21 @@ const ChatPanel = () => {
     }
   };
 
-  const handleMessagesLoaded = () => {
+  // useCallback to avoid re-rendering on MessageListContainer component
+  const handleMessagesLoaded = useCallback(() => {
     scrollToBottom("instant");
-  };
+  }, []);
 
   const handleSubmit = () => {
     const text = messages[selectedChannel].trim();
     if (!text) return;
 
-    // Reset the message input
+    // Reset the message input when submit
     updateChannelMessage(selectedChannel, "");
     sendMessage({ text, userId: selectedUserId });
-    scrollToBottom("smooth");
+    setTimeout(() => {
+      scrollToBottom("smooth");
+    }, 100);
   };
 
   const handleResend = (message: ErrorMessageType) => {
