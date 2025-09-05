@@ -44,7 +44,7 @@ export const MessageListContainer = forwardRef<
         </div>
       )}
       <div className="space-y-2">
-        {isLoadingLatestMessages && <MessageListSkeletonLoading count={5} />}
+        {isLoadingLatestMessages && <MessageListSkeletonLoading count={10} />}
         {messages?.map((m) => (
           <Message
             key={m.messageId}
