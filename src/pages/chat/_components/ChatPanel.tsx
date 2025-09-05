@@ -46,20 +46,23 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
     },
   });
 
-  const scrollToBottom = () => {
-    console.log("scrollToBottom", messageListRef.current);
+  const scrollToBottom = (behavior: ScrollBehavior) => {
     if(messageListRef.current) {
       messageListRef.current.scrollTo({
         top: messageListRef.current.scrollHeight,
-        behavior: "smooth",
+        behavior: behavior,
       });
     }
+  };
+
+  const handleMessagesLoaded = () => {
+    scrollToBottom("instant");
   };
 
   const handleSubmit = () => {
     const text = message[channelId].trim();
     if (!text) return;
-    scrollToBottom();
+    scrollToBottom("smooth");
 
     postMessage({
       variables: {
@@ -89,7 +92,12 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
     <div className="flex flex-col gap-4 h-full">
       <div className="flex flex-col flex-1 overflow-hidden rounded-md border border-gray-200 p-3 bg-white">
 
-        <MessageListContainer ref={messageListRef} channelId={channelId} selectedUserId={selectedUserId} />
+        <MessageListContainer 
+          ref={messageListRef} 
+          channelId={channelId} 
+          selectedUserId={selectedUserId}
+          onMessagesLoaded={handleMessagesLoaded}
+        />
       </div>
 
       <Composer

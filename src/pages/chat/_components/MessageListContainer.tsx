@@ -9,11 +9,12 @@ import { useMessageFetchLatest } from "@/modules/chat/api/hooks/useMessageFetchL
 import { useMessagesMoreQuery } from "@/modules/chat/api/hooks/useMessagesMoreQuery";
 import { MessageList } from "@/modules/chat/components/MessageList";
 import Button from "@/ui/Button";
-import { forwardRef, useMemo, useState } from "react";
+import { forwardRef, useMemo, useState, useEffect } from "react";
 
 type MessageListContainerProps = {
   channelId: ChannelId;
   selectedUserId: UserId;
+  onMessagesLoaded?: () => void;
 };
 
 type NoMoreMessagesType = {
@@ -23,6 +24,7 @@ type NoMoreMessagesType = {
 export const MessageListContainer = forwardRef<HTMLDivElement, MessageListContainerProps>(({
   channelId,
   selectedUserId,
+  onMessagesLoaded,
 }, ref) => {
   // loading in useLazyQuery is bugged, so we need to use a state to track the loading
   const [isLoadingMoreMessages, setIsLoadingMoreMessages] = useState(false);
@@ -65,6 +67,13 @@ export const MessageListContainer = forwardRef<HTMLDivElement, MessageListContai
 
     return [...latestMessages];
   }, [data]);
+
+  // Call onMessagesLoaded when messages are loaded
+  useEffect(() => {
+    if (messages.length > 0 && !loading && onMessagesLoaded) {
+      onMessagesLoaded();
+    }
+  }, [messages.length, loading, onMessagesLoaded]);
 
   const handleUpdateLatestMessagesCache = (
     result: MessagesFetchLatestQuery["MessagesFetchLatest"]
