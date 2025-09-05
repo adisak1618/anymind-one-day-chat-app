@@ -5,8 +5,8 @@ import {
   type MessagesFetchLatestQuery,
   type UserId,
 } from "@/gql/generated/graphql";
-import { useMessageFetchLatest } from "@/modules/chat/api/hooks/useMessageFetchLatestQuery";
-import { useMessagesMoreQuery } from "@/modules/chat/api/hooks/useMessagesMoreQuery";
+import { useMessageFetchLatest } from "@/modules/chat/hooks/useMessageFetchLatestQuery";
+import { useMessagesMoreQuery } from "@/modules/chat/hooks/useMessagesMoreQuery";
 import { MessageList } from "@/modules/chat/components/MessageList";
 import Button from "@/ui/Button";
 import { forwardRef, useMemo, useState, useEffect } from "react";

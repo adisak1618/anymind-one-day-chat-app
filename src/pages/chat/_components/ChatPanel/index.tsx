@@ -6,7 +6,7 @@ import {
 } from "@gql/generated/graphql";
 import { MessageListContainer } from "../MessageListContainer";
 import type { ErrorMessageType } from "./type";
-import { useSendMessageHook } from "@/modules/chat/api/hooks/useSendMessageHook";
+import { useSendMessageHook } from "@/modules/chat/hooks/useSendMessageHook";
 
 type ChatPanelProps = {
   channelId: ChannelId;
@@ -87,7 +87,6 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
       </div>
 
       <Composer
-        // key={channelId}
         message={message[channelId]}
         onChange={(text) =>
           setMessage({
