@@ -1,5 +1,5 @@
 import Button from "@/ui/Button";
-import React, { forwardRef, useEffect } from "react";
+import { forwardRef, useEffect } from "react";
 import type { ErrorMessageType } from "./ChatPanel/type";
 import { useGetMessagesHook } from "@/modules/chat/hooks/useGetMessagesHook";
 import { Message } from "@/modules/chat/components/Message";
