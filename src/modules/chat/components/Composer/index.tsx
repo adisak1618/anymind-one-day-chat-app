@@ -3,6 +3,7 @@ import Button from "@/ui/Button"
 import SelectInput from "@/ui/SelectInput"
 import TextInput from "@/ui/TextInput"
 import { useChatContext } from "../../context/ChatContext"
+import { SendIcon } from "@/ui/Icon"
 
 type ComposerProps = {
   message: string
@@ -21,7 +22,7 @@ export const Composer = ({ message, onSubmit, onChange }: ComposerProps) => {
           <option value={UserId.Russell}>{UserId.Russell}</option>
           <option value={UserId.Joyse}>{UserId.Joyse}</option>
         </SelectInput>
-        <Button onClick={onSubmit}>Send</Button>
+        <Button className="!flex flex-nowrap items-center gap-2" onClick={onSubmit} icon={<SendIcon className="w-4 h-4 text-white" />}>Send</Button>
       </div>
     </div>
   )
