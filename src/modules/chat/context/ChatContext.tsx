@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext } from 'react';
 import { ChannelId, UserId } from '@gql/generated/graphql';
+import { useLocalStorage } from '@/lib/useLocalStorage';
 
 type ChatContextType = {
   selectedChannel: ChannelId;
@@ -11,8 +12,8 @@ type ChatContextType = {
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [selectedChannel, setSelectedChannel] = useState<ChannelId>(ChannelId.General);
-  const [selectedUserId, setSelectedUserId] = useState<UserId>(UserId.Sam);
+  const [selectedChannel, setSelectedChannel] = useLocalStorage<ChannelId>('channel-id', ChannelId.General);
+  const [selectedUserId, setSelectedUserId] = useLocalStorage<UserId>('user-id', UserId.Sam);
 
   return (
     <ChatContext.Provider value={{
