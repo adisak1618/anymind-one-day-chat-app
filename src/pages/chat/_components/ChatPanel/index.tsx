@@ -1,40 +1,38 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Composer } from "@/modules/chat/components/Composer";
 import {
   ChannelId,
-  UserId,
 } from "@gql/generated/graphql";
 import { MessageListContainer } from "../MessageListContainer";
 import type { ErrorMessageType } from "./type";
 import { useSendMessageHook } from "@/modules/chat/hooks/useSendMessageHook";
+import { useChatState } from "@/modules/chat/hooks/useChatState";
 
 type ChatPanelProps = {
   channelId: ChannelId;
 };
 
-type ChannelMessagesType = {
-  [key in string]: string;
-};
-
 const ChatPanel = ({ channelId }: ChatPanelProps) => {
   const messageListRef = useRef<HTMLDivElement>(null);
-  const [selectedUserId, setSelectedUserId] = useState<UserId>(UserId.Sam);
-  const [errorMessages, setErrorMessage] = useState<ErrorMessageType[]>([]);
-
-  const [message, setMessage] = useState<ChannelMessagesType>({});
+  const {
+    selectedUserId,
+    setSelectedUserId,
+    errorMessages,
+    messages,
+    addErrorMessage,
+    removeErrorMessage,
+    updateChannelMessage
+  } = useChatState();
   const { sendMessage } = useSendMessageHook({
     channelId,
     onError: (_, context) => {
-      setErrorMessage([
-        ...errorMessages,
-        {
-          id: crypto.randomUUID(),
-          channelId,
-          message: context?.variables?.text ?? "",
-          userId: selectedUserId,
-          datetime: new Date().toISOString(),
-        },
-      ]);
+      addErrorMessage({
+        id: crypto.randomUUID(),
+        channelId,
+        message: context?.variables?.text ?? "",
+        userId: selectedUserId,
+        datetime: new Date().toISOString(),
+      });
     },
   });
 
@@ -52,25 +50,22 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
   };
 
   const handleSubmit = () => {
-    const text = message[channelId].trim();
+    const text = messages[channelId].trim();
     if (!text) return;
 
     // Reset the message input
-    setMessage({
-      ...message,
-      [channelId]: "",
-    });
+    updateChannelMessage(channelId, "");
     sendMessage({ text, userId: selectedUserId });
     scrollToBottom("smooth");
   };
 
   const handleResend = (message: ErrorMessageType) => {
-    setErrorMessage(errorMessages.filter(m => m.id !== message.id));
+    removeErrorMessage(message.id);
     sendMessage({ text: message.message, userId: message.userId });
   };
 
   const handleUndoSend = (messageId: ErrorMessageType["id"]) => {
-    setErrorMessage(errorMessages.filter(m => m.id !== messageId));
+    removeErrorMessage(messageId);
   };
 
   return (
@@ -84,20 +79,15 @@ const ChatPanel = ({ channelId }: ChatPanelProps) => {
           selectedUserId={selectedUserId}
           onMessagesLoaded={handleMessagesLoaded}
           errorMessages={errorMessages}
-          onDeleteErrorMessage={errorMessageId => setErrorMessage(errorMessages.filter(m => m.id !== errorMessageId))}
+          onDeleteErrorMessage={removeErrorMessage}
           onResend={handleResend}
           onUndoSend={handleUndoSend}
         />
       </div>
 
       <Composer
-        message={message[channelId]}
-        onChange={(text) =>
-          setMessage({
-            ...message,
-            [channelId]: text,
-          })
-        }
+        message={messages[channelId]}
+        onChange={(text) => updateChannelMessage(channelId, text)}
         selectedUserId={selectedUserId}
         setSelectedUserId={setSelectedUserId}
         onSubmit={handleSubmit}
