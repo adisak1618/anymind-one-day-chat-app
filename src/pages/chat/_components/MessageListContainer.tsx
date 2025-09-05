@@ -33,7 +33,7 @@ export const MessageListContainer = forwardRef<
     if (!isLoadingLatestMessages && onMessagesLoaded) {
       onMessagesLoaded();
     }
-  }, [isLoadingLatestMessages, onMessagesLoaded]);
+  }, [isLoadingLatestMessages, onMessagesLoaded, selectedUserId]);
 
   return (
     <div ref={ref} className="flex flex-col gap-4">

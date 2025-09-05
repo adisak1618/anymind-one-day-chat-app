@@ -7,7 +7,7 @@ type ChannelMessagesType = {
 };
 
 export const useChatState = () => {
-  const { selectedChannel } = useChatContext();
+  const { selectedChannel, selectedUserId } = useChatContext();
   const [errorMessages, setErrorMessages] = useLocalStorage<ErrorMessageType[]>('chat-error-messages', []);
   const [messages, setMessages] = useLocalStorage<ChannelMessagesType>('chat-messages', {});
 
@@ -28,7 +28,7 @@ export const useChatState = () => {
 
   return {
     // State values
-    errorMessages: errorMessages?.filter(m => m.channelId === selectedChannel),
+    errorMessages: errorMessages?.filter(m => m.channelId === selectedChannel && m.userId === selectedUserId),
     messages,
     
     // State setters
