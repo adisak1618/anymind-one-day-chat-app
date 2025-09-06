@@ -11,6 +11,7 @@ type UseSendMessageHookProps = {
 type sendMessageProps = {
   text: string;
   userId: UserId;
+  skipError?: boolean;
 };
 
 export const useSendMessageHook = ({ channelId, onCompleted, onError }: UseSendMessageHookProps) => {
@@ -36,25 +37,30 @@ export const useSendMessageHook = ({ channelId, onCompleted, onError }: UseSendM
     },
   });
 
-  const sendMessage = ({ text, userId }: sendMessageProps) => {
-    mutation({
-      variables: {
-        channelId,
-        userId,
-        text,
-      },
-      optimisticResponse: {
-        MessagePost: {
-          __typename: "MessageEnum",
+  const sendMessage = async ({ text, userId, skipError }: sendMessageProps) => {
+    try {
+      await mutation({
+        variables: {
+          channelId,
           userId,
-          messageId: "temp-id",
           text,
-          datetime: new Date().toISOString(),
         },
-      },
-      onCompleted,
-      onError,
-    });
+        optimisticResponse: {
+          MessagePost: {
+            __typename: "MessageEnum",
+            userId,
+            messageId: "temp-id",
+            text,
+            datetime: new Date().toISOString(),
+          },
+        },
+        onCompleted,
+        onError: skipError ? undefined : onError,
+        errorPolicy: 'all', // Prevent Apollo from throwing unhandled errors
+      });
+    } catch (error) {
+      console.warn(error);
+    }
   };
 
 
