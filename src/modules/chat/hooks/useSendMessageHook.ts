@@ -38,24 +38,29 @@ export const useSendMessageHook = ({ channelId, onCompleted, onError }: UseSendM
   });
 
   const sendMessage = async ({ text, userId, skipError }: sendMessageProps) => {
-    await mutation({
-      variables: {
-        channelId,
-        userId,
-        text,
-      },
-      optimisticResponse: {
-        MessagePost: {
-          __typename: "MessageEnum",
+    try {
+      await mutation({
+        variables: {
+          channelId,
           userId,
-          messageId: "temp-id",
           text,
-          datetime: new Date().toISOString(),
         },
-      },
-      onCompleted,
-      onError: skipError ? undefined : onError,
-    });
+        optimisticResponse: {
+          MessagePost: {
+            __typename: "MessageEnum",
+            userId,
+            messageId: "temp-id",
+            text,
+            datetime: new Date().toISOString(),
+          },
+        },
+        onCompleted,
+        onError: skipError ? undefined : onError,
+        errorPolicy: 'all', // Prevent Apollo from throwing unhandled errors
+      });
+    } catch (error) {
+      console.warn(error);
+    }
   };
 
 
