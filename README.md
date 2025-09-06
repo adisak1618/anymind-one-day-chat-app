@@ -1,6 +1,22 @@
 # 💬 Chat Application - React + TypeScript + GraphQL
 
+![AnyMind One day Chat App](/public/screencapture.png)
+
 A modern real-time chat application built with React, TypeScript, and GraphQL. Features user selection, channel switching, message persistence, error handling, and comprehensive testing.
+
+## 🌐 Live Demo
+
+🚀 [VIEW LIVE APP](https://anymind-one-day-chat-app.vercel.app/)
+
+## 📚 Important Document
+
+📋 [REQUIREMENTS](./requirement.md)
+
+🚀 [EXTRA FEATURES](./EXTRA_FEATURES.md)
+
+### All additional features implemented beyond requirements
+
+---
 
 ## 🚀 Quick Start
 
