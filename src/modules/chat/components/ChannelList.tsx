@@ -13,7 +13,7 @@ export const ChannelList = ({ channels,selectedChannel, setSelectedChannel }: Ch
       <p className="mb-3 text-base">2. Choose your channel</p>
       <div className="space-y-1">
         {channels.map((channel) => (
-          <div key={channel} onClick={() => setSelectedChannel(channel)}>
+          <div role="button" className="channel-list-item" key={channel} onClick={() => setSelectedChannel(channel)}>
             <p className={clsx("text-sm font-medium px-3 py-1 cursor-pointer hover:bg-slate-200 rounded-sm", selectedChannel === channel ? "bg-slate-200" : "")}>{channel}</p>
           </div>
         ))}
