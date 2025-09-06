@@ -55,9 +55,9 @@ function MessageStatus({ status }: Pick<MessageProps, "status">) {
   const baseClassName = "w-4 h-4";
   return (
     <>
-      {status === "loading" && <LoadingIcon className={clsx(baseClassName, "status-loading text-blue-500 animate-spin")} />}
-      {status === "success" && <SuccessIcon className={clsx(baseClassName, "status-success text-green-500")} />}
-      {status === "error" && <ErrorIcon className={clsx(baseClassName, "status-error text-red-500")} />}
+      {status === "loading" && <LoadingIcon className={clsx(baseClassName, "text-blue-500 animate-spin")} />}
+      {status === "success" && <SuccessIcon className={clsx(baseClassName, "text-green-500")} />}
+      {status === "error" && <ErrorIcon className={clsx(baseClassName, "text-red-500")} />}
     </>
   )
 }
