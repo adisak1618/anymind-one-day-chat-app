@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react';
 import { ChannelId, UserId } from '@gql/generated/graphql';
-import { useLocalStorage } from '@/lib/useLocalStorage';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 type ChatContextType = {
   selectedChannel: ChannelId;
