@@ -36,7 +36,7 @@ export const MessageListContainer = forwardRef<
   }, [isLoadingLatestMessages, onMessagesLoaded, selectedUserId]);
 
   return (
-    <div ref={ref} className="flex flex-col gap-4">
+    <div ref={ref} className="message-list-container flex flex-col gap-4">
       {!isLoadingLatestMessages && hasMoreMessages && (
         <div className="flex justify-center">
           <Button onClick={() => fetchMoreMessages()}>

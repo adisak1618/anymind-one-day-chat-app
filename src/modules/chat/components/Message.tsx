@@ -54,10 +54,10 @@ export const Message = ({ userId, text, isMe, status, messageId, datetime, onRes
 function MessageStatus({ status }: Pick<MessageProps, "status">) {
   const baseClassName = "w-4 h-4";
   return (
-    <div>
+    <>
       {status === "loading" && <LoadingIcon className={clsx(baseClassName, "status-loading text-blue-500 animate-spin")} />}
       {status === "success" && <SuccessIcon className={clsx(baseClassName, "status-success text-green-500")} />}
       {status === "error" && <ErrorIcon className={clsx(baseClassName, "status-error text-red-500")} />}
-    </div>
+    </>
   )
 }
