@@ -1,5 +1,5 @@
 import type { ErrorMessageType } from "@/pages/chat/_components/ChatPanel/type";
-import { useLocalStorage } from "@/lib/useLocalStorage";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useChatContext } from "../context/ChatContext";
 
 type ChannelMessagesType = {

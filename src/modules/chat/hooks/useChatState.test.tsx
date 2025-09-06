@@ -15,7 +15,7 @@ jest.mock('../context/ChatContext', () => ({
 
 import { useChatState } from './useChatState';
 import { useChatContext } from '../context/ChatContext';
-import { useLocalStorage } from '../../../lib/useLocalStorage';
+import { useLocalStorage } from '../../../hooks/useLocalStorage';
 
 const mockUseLocalStorage = useLocalStorage as jest.MockedFunction<typeof useLocalStorage>;
 const mockUseChatContext = useChatContext as jest.MockedFunction<typeof useChatContext>;
