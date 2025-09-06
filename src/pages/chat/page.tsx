@@ -11,9 +11,6 @@ const ChatPage = () => {
   return (
     <div className="flex divide-x divide-gray-200 bg-red-50 h-full">
       <div className="w-[250px] py-6 px-4 space-y-3">
-        <div>
-          <p>1.Choose your user</p>
-        </div>
         <ChannelList
           channels={Channels}
           selectedChannel={selectedChannel}
