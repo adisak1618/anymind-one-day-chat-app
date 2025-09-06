@@ -17,7 +17,7 @@ export const Composer = ({ message, onSubmit, onChange }: ComposerProps) => {
     <div className="flex flex-col gap-2">
       <TextInput className="w-full" placeholder="Type a message" rows={2} value={message} onChange={(e) => onChange(e.target.value)} />
       <div className="flex justify-between">
-        <SelectInput className="w-auto" value={selectedUserId} onChange={(e) => setSelectedUserId(e.target.value as UserId)}>
+        <SelectInput id="user-select" className="w-auto" value={selectedUserId} onChange={(e) => setSelectedUserId(e.target.value as UserId)}>
           <option value={UserId.Sam}>{UserId.Sam}</option>
           <option value={UserId.Russell}>{UserId.Russell}</option>
           <option value={UserId.Joyse}>{UserId.Joyse}</option>
