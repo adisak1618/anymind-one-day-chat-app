@@ -3,7 +3,7 @@ import { ChannelId, UserId } from '../../../gql/generated/graphql';
 import type { ErrorMessageType } from '../../../pages/chat/_components/ChatPanel/type';
 
 // Mock the useLocalStorage hook
-jest.mock('../../../lib/useLocalStorage', () => ({
+jest.mock('../../../hooks/useLocalStorage', () => ({
   useLocalStorage: jest.fn(),
 }));
 
