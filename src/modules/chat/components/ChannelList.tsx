@@ -10,7 +10,7 @@ type ChannelListProps = {
 export const ChannelList = ({ channels,selectedChannel, setSelectedChannel }: ChannelListProps) => {
   return (
     <div>
-      <p className="mb-3 text-base">2. Choose your channel</p>
+      <p className="mb-3 text-base">Choose your channel</p>
       <div className="space-y-1">
         {channels.map((channel) => (
           <div role="button" className="channel-list-item" key={channel} onClick={() => setSelectedChannel(channel)}>
