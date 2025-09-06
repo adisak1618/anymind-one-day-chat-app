@@ -11,6 +11,7 @@ type UseSendMessageHookProps = {
 type sendMessageProps = {
   text: string;
   userId: UserId;
+  skipError?: boolean;
 };
 
 export const useSendMessageHook = ({ channelId, onCompleted, onError }: UseSendMessageHookProps) => {
@@ -36,8 +37,8 @@ export const useSendMessageHook = ({ channelId, onCompleted, onError }: UseSendM
     },
   });
 
-  const sendMessage = ({ text, userId }: sendMessageProps) => {
-    mutation({
+  const sendMessage = async ({ text, userId, skipError }: sendMessageProps) => {
+    await mutation({
       variables: {
         channelId,
         userId,
@@ -53,7 +54,7 @@ export const useSendMessageHook = ({ channelId, onCompleted, onError }: UseSendM
         },
       },
       onCompleted,
-      onError,
+      onError: skipError ? undefined : onError,
     });
   };
 

@@ -57,7 +57,7 @@ const ChatPanel = () => {
 
   const handleResend = (message: ErrorMessageType) => {
     removeErrorMessage(message.id);
-    sendMessage({ text: message.message, userId: message.userId });
+    sendMessage({ text: message.message, userId: message.userId, skipError: true });
   };
 
   const handleUndoSend = (messageId: ErrorMessageType["id"]) => {
